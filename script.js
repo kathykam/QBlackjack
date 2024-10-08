@@ -1,7 +1,5 @@
 
 // Make sure this path is correct and the file exists
-let playerScore = 0;
-let computerScore = 0;
 let playerDisplayScore = 0;
 let computerDisplayScore = 0;
 
@@ -83,6 +81,16 @@ function drawCard() {
     return deck.pop();
 }
 
+function updateCardDisplay(elementId, card) {
+    const cardElement = document.getElementById(elementId);
+    cardElement.textContent = `${card.rank}${card.suit}`;
+    if (card.suit === '♥' || card.suit === '♦') {
+        cardElement.style.color = 'red';
+    } else {
+        cardElement.style.color = 'black';
+    }
+}
+
 function playRound() {
     console.log("Start Play Round");
     const playerCard1 = drawCard();
@@ -90,41 +98,61 @@ function playRound() {
     const computerCard1 = drawCard();
     const computerCard2 = drawCard();
     
-    const playerScore = calculateScore([playerCard1, playerCard2]);
-    const computerScore = calculateScore([computerCard1, computerCard2]);
+    const playerScores = calculateBlackjackScores([playerCard1, playerCard2]);
+    const computerScores = calculateBlackjackScores([computerCard1, computerCard2]);
     
     let result;
-    if (playerScore > computerScore) {
+    if (playerScores.hard > computerScores.hard) {
         result = 'player';
         playerDisplayScore++;
-    } else if (computerScore > playerScore) {
+    } else if (computerScores.hard > playerScores.hard) {
         result = 'computer';
         computerDisplayScore++;
     } else {
         result = 'tie';
     }
     
-    updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScore, computerScore, result);
+    updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScores, computerScores, result);
     shuffleDeck();
-        
 }
 
-function calculateScore(cards) {
-    return cards.reduce((score, card) => {
-        if (card.rank === 'A') return score + 11;
-        if (['K', 'Q', 'J'].includes(card.rank)) return score + 10;
-        return score + parseInt(card.rank);
-    }, 0);
+function calculateBlackjackScores(cards) {
+    let hardScore = 0;
+    let softScore = 0;
+    let aceCount = 0;
+
+    for (const card of cards) {
+        if (card.rank === 'A') {
+            aceCount++;
+            softScore += 11;
+            hardScore += 1;
+        } else if (['K', 'Q', 'J'].includes(card.rank)) {
+            softScore += 10;
+            hardScore += 10;
+        } else {
+            const value = parseInt(card.rank);
+            softScore += value;
+            hardScore += value;
+        }
+    }
+
+    // Adjust soft score for Aces
+    while (softScore > 21 && aceCount > 0) {
+        softScore -= 10;
+        aceCount--;
+    }
+
+    return { soft: softScore, hard: hardScore };
 }
 
-function updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScore, computerScore, result) {
+function updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScores, computerScores, result) {
     updateCardDisplay('player-card-1', playerCard1);
     updateCardDisplay('player-card-2', playerCard2);
     updateCardDisplay('computer-card-1', computerCard1);
     updateCardDisplay('computer-card-2', computerCard2);
- 
-    document.getElementById('player-sum').textContent = `Sum: ${playerScore}`;
-    document.getElementById('computer-sum').textContent = `Sum: ${computerScore}`;
+    
+    document.getElementById('player-sum').textContent = formatScore(playerScores);
+    document.getElementById('computer-sum').textContent = formatScore(computerScores);
     
     let resultText = '';
     if (result === 'player') {
@@ -139,12 +167,10 @@ function updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, p
     document.getElementById('computer-score').textContent = computerDisplayScore;
 }
 
-function updateCardDisplay(elementId, card) {
-    const cardElement = document.getElementById(elementId);
-    cardElement.textContent = `${card.rank}${card.suit}`;
-    if (card.suit === '♥' || card.suit === '♦') {
-        cardElement.style.color = 'red';
+function formatScore(scores) {
+    if (scores.soft !== scores.hard) {
+        return `Sum: ${scores.hard} or Hard: ${scores.soft}`;
     } else {
-        cardElement.style.color = 'black';
+        return `Sum: ${scores.hard}`;
     }
 }
