@@ -33,7 +33,12 @@
                 <p>Score: <span id="player-score">0</p>
             </div>
         </div>
-<button id="draw-card" onclick="playRound()">Draw Cards</button>
+ <div class="button-container">
+     <button id="draw-card" onclick="playRound()">Draw Cards</button>
+     <button id="draw-card-btn" disabled onclic="drawExtraCard()">Draw Card</button>
+ </div>
+
+ 
 <div id="result"></div>
 <div class="instructions">
     <h3>How to play:</h3>

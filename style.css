@@ -41,22 +41,34 @@ body {
     align-items: center;
 }
 
-button {
-    font-size: 18px;
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button-container button {
     padding: 10px 20px;
-    margin: 20px;
+    font-size: 16px;
+    cursor: pointer;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-button:hover {
+.button-container button:hover {
     background-color: #45a049;
 }
 
-#result {
+.button-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+s#result {
     font-size: 24px;
     margin: 20px 0;
     font-weight: bold;

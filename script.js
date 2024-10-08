@@ -2,6 +2,7 @@
 // Make sure this path is correct and the file exists
 let playerDisplayScore = 0;
 let computerDisplayScore = 0;
+let playerHand = [];
 
 const cardData = [
     { suit: '♠', rank: 'A', color: 'black' },
@@ -82,6 +83,7 @@ function drawCard() {
 }
 
 function updateCardDisplay(elementId, card) {
+    console.log("Update Card Display");
     const cardElement = document.getElementById(elementId);
     cardElement.textContent = `${card.rank}${card.suit}`;
     if (card.suit === '♥' || card.suit === '♦') {
@@ -93,28 +95,143 @@ function updateCardDisplay(elementId, card) {
 
 function playRound() {
     console.log("Start Play Round");
-    const playerCard1 = drawCard();
-    const playerCard2 = drawCard();
-    const computerCard1 = drawCard();
-    const computerCard2 = drawCard();
+    playerHand = [];
+    computerHand = [];
     
-    const playerScores = calculateBlackjackScores([playerCard1, playerCard2]);
-    const computerScores = calculateBlackjackScores([computerCard1, computerCard2]);
-    
-    let result;
-    if (playerScores.hard > computerScores.hard) {
-        result = 'player';
-        playerDisplayScore++;
-    } else if (computerScores.hard > playerScores.hard) {
-        result = 'computer';
-        computerDisplayScore++;
-    } else {
-        result = 'tie';
-    }
-    
-    updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScores, computerScores, result);
-    shuffleDeck();
+    // Disable buttons during dealing
+    document.getElementById('draw-card').disabled = true;
+    document.getElementById('draw-card-btn').disabled = true;
+
+    dealCards();
 }
+
+function dealCards(step = 0) {
+    if (step < 4) {
+        setTimeout(() => {
+            let card = drawCard();
+            if (step === 0) {
+                playerHand[0] = card;
+                updateDisplay(playerHand, computerHand, null, null, null, 'player1');
+            } else if (step === 1) {
+                computerHand[0] = card;
+                updateDisplay(playerHand, computerHand, null, null, null, 'computer1');
+            } else if (step === 2) {
+                playerHand[1] = card;
+                updateDisplay(playerHand, computerHand, null, null, null, 'player2');
+            } else if (step === 3) {
+                computerHand[1] = card;
+                updateDisplay(playerHand, computerHand, null, null, null, 'computer2');
+            }
+            dealCards(step + 1);
+        }, 500);
+    } else {
+        // All cards dealt, determine result
+        const playerScores = calculateBlackjackScores(playerHand);
+        const computerScores = calculateBlackjackScores(computerHand);
+        
+        let result;
+        if (playerScores.hard > computerScores.hard) {
+            result = 'player';
+            playerDisplayScore++;
+        } else if (computerScores.hard > playerScores.hard) {
+            result = 'computer';
+            computerDisplayScore++;
+        } else {
+            result = 'tie';
+        }
+        
+        updateDisplay(playerHand, computerHand, playerScores, computerScores, result, 'final');
+        
+        // Enable the "Draw Card" button if it's the player's turn
+        document.getElementById('draw-card-btn').disabled = false;
+        document.getElementById('draw-card').disabled = false;
+        
+        shuffleDeck();
+    }
+}
+
+
+
+function drawExtraCard() {
+    document.getElementById('draw-card-btn').disabled = true;
+    
+    setTimeout(() => {
+        const newCard = drawCard();
+        playerHand.push(newCard);
+        const playerScores = calculateBlackjackScores(playerHand);
+        
+        updateDisplay(playerHand, computerHand, playerScores);
+        
+        // Check if the player has busted
+        if (playerScores.hard > 21) {
+            updateDisplay(playerHand, computerHand, playerScores, calculateBlackjackScores(computerHand), 'computer');
+        } else {
+            document.getElementById('draw-card-btn').disabled = false;
+        }
+    }, 500);
+}
+
+function updateDisplay(playerHand, computerHand, playerScores = null, computerScores = null, result = null, step = null) {
+    // Update player cards
+    for (let i = 0; i < 2; i++) {
+        const cardElementId = `player-card-${i+1}`;
+        if (i < playerHand.length) {
+            updateCardDisplay(cardElementId, playerHand[i]);
+        } else {
+            document.getElementById(cardElementId).textContent = '';
+            document.getElementById(cardElementId).style.display = 'none';
+        }
+    }
+
+    // Update computer cards
+    for (let i = 0; i < 2; i++) {
+        const cardElementId = `computer-card-${i+1}`;
+        const cardElement = document.getElementById(cardElementId);
+        if (i < computerHand.length) {
+            if (i === 0 || step === 'final') {
+                // Show the first card or all cards if it's the final step
+                updateCardDisplay(cardElementId, computerHand[i]);
+            } else {
+                // Show face-down card
+                cardElement.textContent = '🂠';
+                cardElement.style.color = 'black';
+                cardElement.style.display = 'inline-block';
+            }
+        } else {
+            cardElement.textContent = '';
+            cardElement.style.display = 'none';
+        }
+    }
+
+    // Update scores and result only if provided
+    if (playerScores && computerScores) {
+        document.getElementById('player-sum').textContent = formatScore(playerScores);
+        document.getElementById('computer-sum').textContent = formatScore(computerScores);
+    }
+
+    if (result) {
+        const resultElement = document.getElementById('result');
+        resultElement.classList.remove('win', 'lose', 'tie');
+
+        let resultText = '';
+        if (result === 'player') {
+            resultText = 'You win!';
+            resultElement.classList.add('win');
+        } else if (result === 'computer') {
+            resultText = 'Computer wins!';
+            resultElement.classList.add('lose');
+        } else {
+            resultText = "It's a tie!";
+            resultElement.classList.add('tie');
+        }
+        resultElement.textContent = resultText;
+
+        document.getElementById('player-score').textContent = playerDisplayScore;
+        document.getElementById('computer-score').textContent = computerDisplayScore;
+    }
+}
+
+
 
 function calculateBlackjackScores(cards) {
     let hardScore = 0;
@@ -143,28 +260,6 @@ function calculateBlackjackScores(cards) {
     }
 
     return { soft: softScore, hard: hardScore };
-}
-
-function updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScores, computerScores, result) {
-    updateCardDisplay('player-card-1', playerCard1);
-    updateCardDisplay('player-card-2', playerCard2);
-    updateCardDisplay('computer-card-1', computerCard1);
-    updateCardDisplay('computer-card-2', computerCard2);
-    
-    document.getElementById('player-sum').textContent = formatScore(playerScores);
-    document.getElementById('computer-sum').textContent = formatScore(computerScores);
-    
-    let resultText = '';
-    if (result === 'player') {
-        resultText = 'You win!';
-    } else if (result === 'computer') {
-        resultText = 'Computer wins!';
-    } else {
-        resultText = "It's a tie!";
-    }
-    document.getElementById('result').textContent = resultText;
-    document.getElementById('player-score').textContent = playerDisplayScore;
-    document.getElementById('computer-score').textContent = computerDisplayScore;
 }
 
 function formatScore(scores) {
