@@ -1,0 +1,31 @@
+.card {
+  width: 200px;
+  height: 300px;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 36px;
+  font-weight: bold;
+  background-color: white;
+}
+
+.rank {
+  align-self: flex-start;
+}
+
+.suit {
+  align-self: flex-end;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}

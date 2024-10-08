@@ -1,0 +1,72 @@
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
+    <title>Rock | Paper | Scissors</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body onload="loadGame()">
+    <div class="container">
+        <div class="left">
+            <span id="op-1" class="option">&#9994;</span>
+            <span id="op-2" class="option">&#9995;</span>
+            <span id="op-3" class="option">&#9996;</span>
+        </div>
+        <div class="right">
+            <span id="op-4" class="option">&#9994;</span>
+            <span id="op-5" class="option">&#9995;</span>
+            <span id="op-6" class="option">&#9996;</span>
+        </div>
+    </div>
+    <div class="bottom">
+        <button onclick="play()">Start</button>
+    </div>
+</body>
+</html> -->
+<!-- highest card layout  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
+    <title>Highest Card Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <h1>Highest Card Game</h1>
+    <div class="container">
+        <div class="computer">
+            <h2>Computer's Card</h2>
+            <div class="card-container">
+                <div id="computer-card" class="card">?</div>
+                <!--<div id="computer-card-2" class="card">?</div>-->
+            </div>
+            <p>Score: <span id="computer-score">0</p>
+        </div>
+        <div class="player">
+            <h2>Your Card</h2>
+            <div class="card-container">
+                <div id="player-card" class="card">?</div>
+                <!--<div id="player-card-2" class="card">?</div> -->
+            </div>
+            <p>Score: <span id="player-score">0</p>
+        </div>
+    </div>
+    <button id="draw-card" onclick="playRound()">Draw Cards</button>
+    <div id="result"></div>
+    <div class="instructions">
+        <h3>How to play:</h3>
+        <p>Click the "Draw Cards" button to draw a card for you and the computer. The highest card wins the round. Aces are high.</p>
+    </div>
+</body>
+</html>
