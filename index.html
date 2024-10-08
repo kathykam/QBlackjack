@@ -1,5 +1,5 @@
 
-<!-- highest card layout  -->
+<!-- highest cards layout  -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,30 +12,32 @@
     <script src="script.js"></script>
 </head>
 <body>
-    <h1>Highest Card Game</h1>
-    <div class="container">
-        <div class="computer">
-            <h2>Computer's Card</h2>
-            <div class="card-container">
-                <div id="computer-card" class="card">?</div>
-                <!--<div id="computer-card-2" class="card">?</div>-->
+    <h1>Highest Cards Game</h1>
+        <div class="container">
+            <div class="computer">
+                <h2>Computer's Cards</h2>
+                <div class="card-container">
+                    <div id="computer-card-1" class="card"></div>
+                    <div id="computer-card-2" class="card"></div>
+                </div>
+                <div id="computer-sum"></div>
+                <p>Score: <span id="computer-score">0</p>
             </div>
-            <p>Score: <span id="computer-score">0</p>
-        </div>
-        <div class="player">
-            <h2>Your Card</h2>
-            <div class="card-container">
-                <div id="player-card" class="card">?</div>
-                <!--<div id="player-card-2" class="card">?</div> -->
+            <div class="player">
+                <h2>Your Cards</h2>
+                <div class="card-container">
+                    <div id="player-card-1" class="card"></div>
+                    <div id="player-card-2" class="card"></div>
+                </div>
+                <div id="player-sum"></div>
+                <p>Score: <span id="player-score">0</p>
             </div>
-            <p>Score: <span id="player-score">0</p>
         </div>
-    </div>
-    <button id="draw-card" onclick="playRound()">Draw Cards</button>
-    <div id="result"></div>
-    <div class="instructions">
-        <h3>How to play:</h3>
-        <p>Click the "Draw Cards" button to draw a card for you and the computer. The highest card wins the round. Aces are high.</p>
-    </div>
+<button id="draw-card" onclick="playRound()">Draw Cards</button>
+<div id="result"></div>
+<div class="instructions">
+    <h3>How to play:</h3>
+    <p>Click the "Draw Cards" button to draw two cards for you and the computer. The highest sum wins the round.</p>
+</div>
 </body>
 </html>

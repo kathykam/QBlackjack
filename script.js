@@ -2,7 +2,7 @@
 // Make sure this path is correct and the file exists
 let playerScore = 0;
 let computerScore = 0;
-let playDisplayScore = 0;
+let playerDisplayScore = 0;
 let computerDisplayScore = 0;
 
 const cardData = [
@@ -83,64 +83,68 @@ function drawCard() {
     return deck.pop();
 }
 
-
-function compareCards(playerCard, computerCard) {
-    const rankOrder = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    const suitOrder = ['♣', '♦', '♥', '♠']; // Clubs, Diamonds, Hearts, Spades
-
-    const playerRankIndex = rankOrder.indexOf(playerCard.rank);
-    const computerRankIndex = rankOrder.indexOf(computerCard.rank);
-
-    const playerSuitIndex = suitOrder.indexOf(playerCard.suit);
-    const computerSuitIndex = suitOrder.indexOf(computerCard.suit);
-
-    if (playerRankIndex > computerRankIndex) {
-        return 'player';
-    } else if (playerRankIndex < computerRankIndex) {
-        return 'computer';
+function playRound() {
+    console.log("Start Play Round");
+    const playerCard1 = drawCard();
+    const playerCard2 = drawCard();
+    const computerCard1 = drawCard();
+    const computerCard2 = drawCard();
+    
+    const playerScore = calculateScore([playerCard1, playerCard2]);
+    const computerScore = calculateScore([computerCard1, computerCard2]);
+    
+    let result;
+    if (playerScore > computerScore) {
+        result = 'player';
+        playerDisplayScore++;
+    } else if (computerScore > playerScore) {
+        result = 'computer';
+        computerDisplayScore++;
     } else {
-        // If ranks are equal, compare suits
-        if (playerSuitIndex > computerSuitIndex) {
-            return 'player';
-        } else if (playerSuitIndex < computerSuitIndex) {
-            return 'computer';
-        } else {
-            return 'tie';
-        }
+        result = 'tie';
     }
+    
+    updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScore, computerScore, result);
+    shuffleDeck();
+        
 }
 
+function calculateScore(cards) {
+    return cards.reduce((score, card) => {
+        if (card.rank === 'A') return score + 11;
+        if (['K', 'Q', 'J'].includes(card.rank)) return score + 10;
+        return score + parseInt(card.rank);
+    }, 0);
+}
 
-function updateDisplay(playerCard, computerCard, result) {
-
-    document.getElementById('player-card').textContent = `${playerCard.rank}${playerCard.suit}`;
-    document.getElementById('computer-card').textContent = `${computerCard.rank}${computerCard.suit}`;
-    document.getElementById('player-score').textContent = playerScore;
-    document.getElementById('computer-score').textContent = computerScore;
+function updateDisplay(playerCard1, playerCard2, computerCard1, computerCard2, playerScore, computerScore, result) {
+    updateCardDisplay('player-card-1', playerCard1);
+    updateCardDisplay('player-card-2', playerCard2);
+    updateCardDisplay('computer-card-1', computerCard1);
+    updateCardDisplay('computer-card-2', computerCard2);
+ 
+    document.getElementById('player-sum').textContent = `Sum: ${playerScore}`;
+    document.getElementById('computer-sum').textContent = `Sum: ${computerScore}`;
     
     let resultText = '';
     if (result === 'player') {
         resultText = 'You win!';
-        playerScore++;
     } else if (result === 'computer') {
         resultText = 'Computer wins!';
-        computerScore++;
     } else {
         resultText = "It's a tie!";
     }
     document.getElementById('result').textContent = resultText;
-    document.getElementById('player-score').textContent = playerScore;
-    document.getElementById('computer-score').textContent = computerScore;
+    document.getElementById('player-score').textContent = playerDisplayScore;
+    document.getElementById('computer-score').textContent = computerDisplayScore;
 }
 
-
-function playRound() {
-    console.log("Start Play Round")
-    const playerCard = drawCard();
-    const computerCard = drawCard();
-    const result = compareCards(playerCard, computerCard);
-    updateDisplay(playerCard, computerCard, result);
-
-    shuffleDeck();
-} 
-
+function updateCardDisplay(elementId, card) {
+    const cardElement = document.getElementById(elementId);
+    cardElement.textContent = `${card.rank}${card.suit}`;
+    if (card.suit === '♥' || card.suit === '♦') {
+        cardElement.style.color = 'red';
+    } else {
+        cardElement.style.color = 'black';
+    }
+}

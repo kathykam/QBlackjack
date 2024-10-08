@@ -10,8 +10,17 @@ body {
 
 .container {
     display: flex;
-    /* flex-direction: column;
-    align-items: center;    */
+    flex-direction: column;
+    align-items: center;
+
+    justify-content: space-around;
+    width: 100%;
+    max-width: 600px;
+}
+
+.card-container {
+    display: flex;
+    align-items: center;
     justify-content: space-around;
     width: 100%;
     max-width: 600px;
@@ -23,9 +32,13 @@ body {
     border-radius: 10px;
     padding: 20px;
     margin: 10px;
-    min-width: 60px;
+    min-height: 112px;
+    min-width: 88px;
     text-align: center;
     background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 button {
